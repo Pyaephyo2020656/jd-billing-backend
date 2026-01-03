@@ -1,14 +1,15 @@
 package com.tjd.invoicemanagement.service;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.tjd.invoicemanagement.model.Customer;
 import com.tjd.invoicemanagement.model.Relocation;
 import com.tjd.invoicemanagement.repository.CustomerRepository;
 import com.tjd.invoicemanagement.repository.RelocationRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class RelocationService {
@@ -59,5 +60,14 @@ public class RelocationService {
     
     public List<Relocation> getAllRelocations() {
         return relocationRepo.findAll();
+    }
+    
+    @Transactional
+    public void deleteRelocation(Integer id) {
+        if (relocationRepo.existsById(id)) {
+            relocationRepo.deleteById(id);
+        } else {
+            throw new RuntimeException("History record not found");
+        }
     }
 }

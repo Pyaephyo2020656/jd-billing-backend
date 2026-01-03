@@ -3,7 +3,11 @@ package com.tjd.invoicemanagement.service;
 import com.tjd.invoicemanagement.model.Customer;
 import com.tjd.invoicemanagement.model.PackagePlan;
 import com.tjd.invoicemanagement.model.Quarter;
+import com.tjd.invoicemanagement.model.StatusLog;
 import com.tjd.invoicemanagement.repository.CustomerRepository;
+import com.tjd.invoicemanagement.repository.StatusLogRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +21,9 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository customerRepo;
+    
+    @Autowired
+    private StatusLogRepository statusLogRepo;
 
     // Constructor Injection (Lombok မသုံးဘဲ ရေးခြင်း)
     public CustomerService(CustomerRepository customerRepo) {
@@ -115,5 +122,28 @@ public class CustomerService {
         LocalDate nextWeek = today.plusDays(7);
         return customerRepo.findExpiringSoon(today, nextWeek);
     }
+    
+    
+    @Transactional
+    public Customer updateCustomerStatus(Integer id, String newStatus, String remark) {
+        // ၁။ လက်ရှိ Customer ကို ရှာမယ်
+        Customer customer = customerRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        // ၂။ StatusLog ထဲမှာ ရာဇဝင် သိမ်းမယ်
+        StatusLog log = new StatusLog(
+                customer, 
+                customer.getStatus(), // အရင် Status
+                newStatus,            // အခု Status အသစ်
+                remark
+        );
+        statusLogRepo.save(log);
+
+        // ၃။ Customer Table ထဲမှာ Status ကို Update လုပ်မယ်
+        customer.setStatus(newStatus);
+        return customerRepo.save(customer);
+    }
+    
+   
     
 }

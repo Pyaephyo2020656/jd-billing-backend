@@ -2,6 +2,9 @@ package com.tjd.invoicemanagement.controller;
 
 import com.tjd.invoicemanagement.model.Customer;
 import com.tjd.invoicemanagement.service.CustomerService;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,9 @@ public class CustomerController {
     public List<Customer> getAll(@RequestParam(required = false) String search) {
         return service.getAllOrSearch(search);
     }
+    
+    
+
 
     @PostMapping
     public Customer create(@RequestBody Customer customer) { return service.saveCustomer(customer); }
@@ -74,6 +80,21 @@ public class CustomerController {
     @GetMapping("/stats/expiring-soon")
     public List<Customer> getExpiringSoon() {
         return service.getExpiringSoon();
+    }
+    
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(
+            @PathVariable Integer id,
+            @RequestParam String newStatus,
+            @RequestParam String remark) {
+        try {
+            // Service ထဲက updateCustomerStatus ကို လှမ်းခေါ်ပါတယ်
+            Customer updatedCustomer = service.updateCustomerStatus(id, newStatus, remark);
+            return ResponseEntity.ok(updatedCustomer);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error: " + e.getMessage());
+        }
     }
     
 }

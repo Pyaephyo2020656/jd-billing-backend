@@ -29,6 +29,18 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
+    
+    @PatchMapping("/{id}/toggle-status")
+    public ResponseEntity<?> toggleStatus(@PathVariable Integer id) {
+        try {
+            User updatedUser = userService.toggleUserStatus(id);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    
+    
 
     @GetMapping
     public List<User> list() {
@@ -43,5 +55,18 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         userService.deleteUser(id);
+    }
+    
+    
+    @PatchMapping("/{id}/role")
+    public ResponseEntity<?> updateRole(@PathVariable Integer id, @RequestBody String newRole) {
+        try {
+            // Double quotes တွေ ပါလာရင် ဖယ်ထုတ်ပစ်ရန်
+            String cleanedRole = newRole.replace("\"", ""); 
+            User updatedUser = userService.updateUserRole(id, cleanedRole);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

@@ -3,6 +3,8 @@ package com.tjd.invoicemanagement.controller;
 import com.tjd.invoicemanagement.model.Quarter;
 import com.tjd.invoicemanagement.model.Relocation;
 import com.tjd.invoicemanagement.service.RelocationService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -41,5 +43,11 @@ public class RelocationController {
     @GetMapping("/history/all")
     public List<Relocation> getAllHistory() {
         return service.getAllRelocations();
+    }
+    
+    @DeleteMapping("/history/{id}")
+    public ResponseEntity<?> deleteHistory(@PathVariable Integer id) {
+    	service.deleteRelocation(id); // ခုနက Service ထဲက method ကို လှမ်းခေါ်တာပါ
+        return ResponseEntity.ok().build();
     }
 }
