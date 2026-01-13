@@ -50,4 +50,17 @@ public class RelocationController {
     	service.deleteRelocation(id); // ခုနက Service ထဲက method ကို လှမ်းခေါ်တာပါ
         return ResponseEntity.ok().build();
     }
+    
+    @GetMapping("/search")
+    public ResponseEntity<?> searchRelocations(@RequestParam String term) {
+        List<Relocation> results = service.search(term); // Service မှာ method တစ်ခု ထပ်ဆောက်ပေးရပါမယ်
+        
+        // Count တွက်ဖို့အတွက် (Map သုံးပြီး ပြန်ပေးတာ ပိုကောင်းပါတယ်)
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        response.put("data", results);
+        response.put("totalCount", results.size());
+        
+        return ResponseEntity.ok(response);
+    }
+    
 }

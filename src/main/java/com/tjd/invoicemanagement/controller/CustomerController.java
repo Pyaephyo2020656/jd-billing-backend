@@ -97,4 +97,20 @@ public class CustomerController {
         }
     }
     
+    @GetMapping("/stats/monthly-users")
+    public List<Customer> getMonthlyUsers(@RequestParam int year, @RequestParam int month) {
+        return service.getCustomersByMonth(year, month);
+    }
+    
+    
+    @GetMapping("/stats/dnsn-dist")
+    public List<Map<String, Object>> getDnsnDist() {
+        return service.getDnsnDist();
+    }
+
+    @GetMapping("/stats/dnsn-users")
+    public List<Customer> getCustomersByDnsn(@RequestParam String dnsn) {
+        return service.getCustomersByDnsn(dnsn);
+    }
+    
 }

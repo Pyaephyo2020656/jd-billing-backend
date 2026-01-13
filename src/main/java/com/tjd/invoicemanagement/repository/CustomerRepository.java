@@ -64,5 +64,15 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     // ၃။ သက်တမ်းကုန်တော့မည့်သူများ (နောက် ၇ ရက်အတွင်း)
     @Query("SELECT c FROM Customer c WHERE c.expiryDate BETWEEN :start AND :end ORDER BY c.expiryDate ASC")
     List<Customer> findExpiringSoon(@Param("start") LocalDate start, @Param("end") LocalDate end);
+    
+    
+    @Query("SELECT c FROM Customer c WHERE YEAR(c.installDate) = :year AND MONTH(c.installDate) = :month")
+    List<Customer> findByInstallMonth(@Param("year") int year, @Param("month") int month);
+    
+    
+    @Query("SELECT c.dnsn, COUNT(c) FROM Customer c WHERE c.dnsn IS NOT NULL GROUP BY c.dnsn")
+    List<Object[]> getDnsnDistribution();
+    
+    List<Customer> findByDnsn(String dnsn);
 
 }

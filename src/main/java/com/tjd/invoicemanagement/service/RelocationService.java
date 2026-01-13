@@ -70,4 +70,10 @@ public class RelocationService {
             throw new RuntimeException("History record not found");
         }
     }
+    
+    
+    public List<Relocation> search(String term) {
+        // Repository ထဲက searchByCustomer method ကို လှမ်းခေါ်ပါမယ်
+        return relocationRepo.searchByCustomer(term);
+    }
 }

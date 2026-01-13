@@ -144,6 +144,26 @@ public class CustomerService {
         return customerRepo.save(customer);
     }
     
+    public List<Customer> getCustomersByMonth(int year, int month) {
+        // Repository ထဲက findByInstallMonth ကို လှမ်းခေါ်တာပါ
+        return customerRepo.findByInstallMonth(year, month);
+    }
+    
+    public List<Map<String, Object>> getDnsnDist() {
+        List<Object[]> results = customerRepo.getDnsnDistribution();
+        return results.stream().map(row -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", row[0]);
+            map.put("count", row[1]);
+            return map;
+        }).collect(Collectors.toList());
+    }
+
+    // ၂။ DNSN တစ်ခုချင်းစီအလိုက် လူစာရင်း (Modal အတွက်)
+    public List<Customer> getCustomersByDnsn(String dnsn) {
+        return customerRepo.findByDnsn(dnsn); 
+    }
+    
    
     
 }
