@@ -74,5 +74,14 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     List<Object[]> getDnsnDistribution();
     
     List<Customer> findByDnsn(String dnsn);
+    
+    
+    List<Customer> findByQuarter_QtrName(String qtrName);
+
+
+ @Query("SELECT c FROM Customer c WHERE CONCAT(c.packagePlan.planName, ' (', c.packagePlan.bandwidth, ')') = :planName")
+ List<Customer> findByPlanFullDisplayName(@Param("planName") String planName);
+    
+    
 
 }

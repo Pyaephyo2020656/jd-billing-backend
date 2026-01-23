@@ -36,5 +36,46 @@ public class StatusLogController {
     public List<StatusLog> getLogsByCustomerId(@PathVariable Integer id) {
         return statusLogRepo.findByCustomer_IdOrderByChangeDateDesc(id);
     }
+    
+    
+    @org.springframework.web.bind.annotation.PutMapping("/{id}")
+    public org.springframework.http.ResponseEntity<?> updateLog(
+            @PathVariable Integer id, 
+            @org.springframework.web.bind.annotation.RequestBody java.util.Map<String, String> payload) {
+        try {
+            return statusLogRepo.findById(id).map(log -> {
+                // Remark ကို ပြင်မယ်
+                log.setRemark(payload.get("remark"));
+                
+                
+                if (payload.get("changeDate") != null) {
+                    java.time.LocalDate date = java.time.LocalDate.parse(payload.get("changeDate"));
+                    log.setChangeDate(date.atStartOfDay());
+                }
+                
+                statusLogRepo.save(log);
+                return org.springframework.http.ResponseEntity.ok(log);
+            }).orElse(org.springframework.http.ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
+
+    // ၂။ Log ကို ဖျက်ရန် (DELETE /api/status-logs/{id})
+    @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
+    public org.springframework.http.ResponseEntity<?> deleteLog(@PathVariable Integer id) {
+        try {
+            if (statusLogRepo.existsById(id)) {
+                statusLogRepo.deleteById(id);
+                return org.springframework.http.ResponseEntity.ok().build();
+            }
+            return org.springframework.http.ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
+    
+
+    
 }
 

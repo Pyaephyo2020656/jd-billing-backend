@@ -21,14 +21,15 @@ public class StatusLog {
 
     public StatusLog() {}
 
-    // Constructor for easy creation
-    public StatusLog(Customer customer, String oldStatus, String newStatus, String remark) {
-        this.customer = customer;
-        this.oldStatus = oldStatus;
-        this.newStatus = newStatus;
-        this.changeDate = LocalDateTime.now();
-        this.remark = remark;
-    }
+ // Constructor ကို parameter ၅ ခု လက်ခံနိုင်အောင် ပြင်လိုက်ပါပြီ
+ public StatusLog(Customer customer, String oldStatus, String newStatus, String remark, LocalDateTime changeDate) {
+     this.customer = customer;
+     this.oldStatus = oldStatus;
+     this.newStatus = newStatus;
+     this.remark = remark;
+     // အပြင်က ရက်စွဲ ပါလာရင် ယူမယ်၊ မပါရင် အခုအချိန်ကို ယူမယ်
+     this.changeDate = (changeDate != null) ? changeDate : LocalDateTime.now();
+ }
 
 	public Integer getLogId() {
 		return logId;

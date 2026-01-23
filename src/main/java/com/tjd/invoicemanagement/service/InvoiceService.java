@@ -35,14 +35,72 @@ public class InvoiceService {
 
     public Invoice getById(Integer id) { return repo.findById(id).orElse(null); }
 
+//    @Transactional
+//    public Invoice update(Integer id, Invoice update) {
+//        return repo.findById(id).map(existing -> {
+//            existing.setCustomer(update.getCustomer());
+//            existing.setTotalAmount(update.getTotalAmount());
+//            existing.setStatus(update.getStatus());
+//            existing.getItems().clear();
+//            update.getItems().forEach(i -> { i.setInvoice(existing); existing.getItems().add(i); });
+//            return repo.save(existing);
+//        }).orElse(null);
+//    }
+    
+//    
+//    @Transactional
+//    public Invoice update(Integer id, Invoice update) {
+//        return repo.findById(id).map(existing -> {
+//            existing.setCustomer(update.getCustomer());
+//            existing.setInvoiceDate(update.getInvoiceDate()); 
+//            
+//            
+//            existing.setSubTotal(update.getSubTotal());
+//            existing.setDiscountAmount(update.getDiscountAmount());
+//            
+//            existing.setTotalAmount(update.getTotalAmount());
+//            existing.setStatus(update.getStatus());
+//            existing.setRemark(update.getRemark()); 
+//            
+//     
+//            existing.getItems().clear();
+//            update.getItems().forEach(i -> { 
+//                i.setInvoice(existing); 
+//                existing.getItems().add(i); 
+//            });
+//            
+//            return repo.save(existing);
+//        }).orElse(null);
+//    }
+    
+    
+    
     @Transactional
     public Invoice update(Integer id, Invoice update) {
         return repo.findById(id).map(existing -> {
+      
             existing.setCustomer(update.getCustomer());
+            existing.setInvoiceDate(update.getInvoiceDate()); 
+            existing.setSubTotal(update.getSubTotal());
+            existing.setDiscountAmount(update.getDiscountAmount());
             existing.setTotalAmount(update.getTotalAmount());
             existing.setStatus(update.getStatus());
+            existing.setRemark(update.getRemark()); 
+
+            if ("PAID".equals(update.getStatus()) && update.getNextExpiryDate() != null) {
+                if (existing.getCustomer() != null) {
+                
+                    existing.getCustomer().setExpiryDate(update.getNextExpiryDate());
+                }
+            }
+            
+     
             existing.getItems().clear();
-            update.getItems().forEach(i -> { i.setInvoice(existing); existing.getItems().add(i); });
+            update.getItems().forEach(i -> { 
+                i.setInvoice(existing); 
+                existing.getItems().add(i); 
+            });
+            
             return repo.save(existing);
         }).orElse(null);
     }

@@ -81,16 +81,23 @@ public class CustomerController {
     public List<Customer> getExpiringSoon() {
         return service.getExpiringSoon();
     }
-    
     @PutMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(
             @PathVariable Integer id,
             @RequestParam String newStatus,
-            @RequestParam String remark) {
+            @RequestParam String remark,
+            @RequestParam String statusDate) { // ၁။ Frontend ကပို့တဲ့ statusDate ကို လက်ခံပါမယ်
         try {
-            // Service ထဲက updateCustomerStatus ကို လှမ်းခေါ်ပါတယ်
-            Customer updatedCustomer = service.updateCustomerStatus(id, newStatus, remark);
+            // ၂။ String ဖြစ်နေတဲ့ statusDate ကို LocalDate အဖြစ် Parse လုပ်ပါမယ်
+            java.time.LocalDate date = java.time.LocalDate.parse(statusDate);
+
+            // ၃။ Service ကို parameter ၄ ခုနဲ့ လှမ်းခေါ်ပါမယ်
+            Customer updatedCustomer = service.updateCustomerStatus(id, newStatus, remark, date);
+            
             return ResponseEntity.ok(updatedCustomer);
+        } catch (java.time.format.DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error: Invalid date format. Please use yyyy-MM-dd");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error: " + e.getMessage());
@@ -111,6 +118,17 @@ public class CustomerController {
     @GetMapping("/stats/dnsn-users")
     public List<Customer> getCustomersByDnsn(@RequestParam String dnsn) {
         return service.getCustomersByDnsn(dnsn);
+    }
+    
+    @GetMapping("/stats/quarter-users")
+    public List<Customer> getQuarterUsers(@RequestParam String quarter) {
+        return service.getCustomersByQuarter(quarter);
+    }
+
+    // ၂။ Plan တစ်ခုချင်းစီအလိုက် User List ထုတ်ရန်
+    @GetMapping("/stats/plan-users")
+    public List<Customer> getPlanUsers(@RequestParam String plan) {
+        return service.getCustomersByPlanName(plan);
     }
     
 }

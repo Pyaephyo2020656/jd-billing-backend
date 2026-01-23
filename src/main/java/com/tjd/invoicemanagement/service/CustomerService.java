@@ -124,22 +124,43 @@ public class CustomerService {
     }
     
     
+//    @Transactional
+//    public Customer updateCustomerStatus(Integer id, String newStatus, String remark) {
+//        // ၁။ လက်ရှိ Customer ကို ရှာမယ်
+//        Customer customer = customerRepo.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Customer not found"));
+//
+//        // ၂။ StatusLog ထဲမှာ ရာဇဝင် သိမ်းမယ်
+//        StatusLog log = new StatusLog(
+//                customer, 
+//                customer.getStatus(), // အရင် Status
+//                newStatus,            // အခု Status အသစ်
+//                remark
+//        );
+//        statusLogRepo.save(log);
+//
+//        // ၃။ Customer Table ထဲမှာ Status ကို Update လုပ်မယ်
+//        customer.setStatus(newStatus);
+//        return customerRepo.save(customer);
+//    }
+    
+    
     @Transactional
-    public Customer updateCustomerStatus(Integer id, String newStatus, String remark) {
-        // ၁။ လက်ရှိ Customer ကို ရှာမယ်
+    public Customer updateCustomerStatus(Integer id, String newStatus, String remark, LocalDate statusDate) {
         Customer customer = customerRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        // ၂။ StatusLog ထဲမှာ ရာဇဝင် သိမ်းမယ်
+        // Date Picker ကလာတဲ့ statusDate ကို Constructor ထဲ ထည့်ပေးလိုက်ပါ
         StatusLog log = new StatusLog(
                 customer, 
-                customer.getStatus(), // အရင် Status
-                newStatus,            // အခု Status အသစ်
-                remark
+                customer.getStatus(), 
+                newStatus,           
+                remark,
+                statusDate.atStartOfDay() // LocalDate ကို LocalDateTime ပြောင်းခြင်း
         );
+        
         statusLogRepo.save(log);
 
-        // ၃။ Customer Table ထဲမှာ Status ကို Update လုပ်မယ်
         customer.setStatus(newStatus);
         return customerRepo.save(customer);
     }
@@ -164,6 +185,19 @@ public class CustomerService {
         return customerRepo.findByDnsn(dnsn); 
     }
     
+    
+    public List<Customer> getCustomersByQuarter(String quarterName) {
+        return customerRepo.findByQuarter_QtrName(quarterName);
+    }
+
+    // ၁၀။ Plan အလိုက် Customer စာရင်းယူရန် (Modal အတွက်)
+    public List<Customer> getCustomersByPlanName(String planName) {
+        // planName က "HOME (50Mbps)" ပုံစံမျိုး ဖြစ်နေလို့ Repository မှာ CONCAT နဲ့ စစ်တဲ့ method ကို သုံးပါမယ်
+        return customerRepo.findByPlanFullDisplayName(planName);
+    }
+    
+    
+   
    
     
 }

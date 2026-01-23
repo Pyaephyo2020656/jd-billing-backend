@@ -17,7 +17,7 @@ public class Invoice {
     @Column(unique = true, nullable = false)
     private String invoiceNo;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
@@ -31,6 +31,10 @@ public class Invoice {
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<InvoiceItem> items = new ArrayList<>();
+    
+    
+    @Transient 
+    private LocalDate nextExpiryDate;
 
     public Invoice() {}
     
@@ -61,4 +65,7 @@ public class Invoice {
     public void setRemark(String remark) { this.remark = remark; }
     public List<InvoiceItem> getItems() { return items; }
     public void setItems(List<InvoiceItem> items) { this.items = items; }
+    
+    public LocalDate getNextExpiryDate() { return nextExpiryDate; }
+    public void setNextExpiryDate(LocalDate nextExpiryDate) { this.nextExpiryDate = nextExpiryDate; }
 }
